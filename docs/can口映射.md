@@ -20,8 +20,8 @@ udevadm info -a -p /sys/class/net/can0 | grep -E 'KERNELS|SUBSYSTEMS|idVendor|id
 ```
 SUBSYSTEM=="net", ACTION=="add", ATTRS{serial}=="001C00304759530920353831", NAME="can_right_leg"
 SUBSYSTEM=="net", ACTION=="add", ATTRS{serial}=="0030002A4759530A20353831", NAME="can_right_arm"
-SUBSYSTEM=="net", ACTION=="add", ATTRS{serial}=="001D00274759530C20353831", NAME="can_left_leg"
-SUBSYSTEM=="net", ACTION=="add", ATTRS{serial}=="004800214759530C20353831", NAME="can_left_arm"
+SUBSYSTEM=="net", ACTION=="add", ATTRS{serial}=="001D00274759530C20353831", NAME="can_left_arm"
+SUBSYSTEM=="net", ACTION=="add", ATTRS{serial}=="004800214759530C20353831", NAME="can_left_leg"
 ```
 
 usb设备连接电脑的那一刻，linux内核就会调用驱动，首先分配默认名称can0123，然后再调用udev流程做后处理。这也是为什么在udev规则里不把can口命名回代码里写的0123，因为可能重名，所以选择使用can_left_leg文字名称并改py代码。
