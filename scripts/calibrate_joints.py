@@ -64,7 +64,7 @@ while robot.command_controller.commands.get("mode_switch") != 1:
     limit_readings[10] = min(limit_readings[10], joint_readings[10])
     limit_readings[11] = max(limit_readings[11], joint_readings[11])
 
-    print(time.time(), [f"{reading:.2f}" for reading in limit_readings])
+    print(f"{time.time():.4f}", [f"{reading:.2f}" for reading in limit_readings])
 
     time.sleep(0.05)
 

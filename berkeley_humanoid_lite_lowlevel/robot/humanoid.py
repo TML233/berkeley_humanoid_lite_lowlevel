@@ -31,8 +31,8 @@ class Humanoid:
         # self.left_leg_transport = recoil.Bus("can2")
         # self.right_leg_transport = recoil.Bus("can3")
 
-        self.left_leg_transport = recoil.Bus("can0")
-        self.right_leg_transport = recoil.Bus("can1")
+        self.left_leg_transport = recoil.Bus("can_left_leg")
+        self.right_leg_transport = recoil.Bus("can_right_leg")
 
         self.joints = [
             # (self.left_arm_transport,   1,  "left_shoulder_pitch_joint"     ),  # noqa: E241
