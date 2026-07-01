@@ -1,4 +1,6 @@
 # Copyright (c) 2025, -T.K.-.
 
-from .core import *
+from .definitions import *
+from .data import *
+from .bus import *
 from .util import *

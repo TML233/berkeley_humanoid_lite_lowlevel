@@ -17,8 +17,8 @@ udp = UDP(("0.0.0.0", 11000), ("172.28.0.5", 11000))
 
 
 # Initialize and start policy controller
-controller = RlController(cfg)
-controller.load_policy()
+rl_controller = RlController(cfg)
+rl_controller.load_policy()
 
 rate = RateLimiter(1 / cfg.policy_dt)
 
@@ -30,7 +30,7 @@ obs = robot.reset()
 
 try:
     while True:
-        actions = controller.update(obs)
+        actions = rl_controller.update(obs)
         obs = robot.step(actions)
         udp.send_numpy(obs)
 

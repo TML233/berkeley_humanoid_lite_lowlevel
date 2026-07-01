@@ -42,6 +42,17 @@ class XInputEntry:
     BTN_BACK = "BTN_SELECT"
     BTN_START = "BTN_START"
 
+class GamepadModeSwitch:
+    NONE = 0
+    IDLE = 1
+    RL_INIT = 2,
+    RL_RUNNING = 3
+
+class GamepadCommands:
+    VELOCITY_X = "velocity_x"
+    VELOCITY_Y = "velocity_y"
+    VELOCITY_YAW = "velocity_yaw"
+    MODE_SWITCH = "mode_switch"
 
 class Se2Gamepad:
     def __init__(self,
@@ -57,10 +68,10 @@ class Se2Gamepad:
         self.reset()
 
         self.commands = {
-            "velocity_x": 0.0,
-            "velocity_y": 0.0,
-            "velocity_yaw": 0.0,
-            "mode_switch": 0,
+            GamepadCommands.VELOCITY_X: 0.0,
+            GamepadCommands.VELOCITY_Y: 0.0,
+            GamepadCommands.VELOCITY_YAW: 0.0,
+            GamepadCommands.MODE_SWITCH: 0,
         }
 
     def reset(self) -> None:
@@ -94,27 +105,27 @@ class Se2Gamepad:
         velocity_yaw = self._states.get(XInputEntry.AXIS_X_L)
 
         if velocity_x is not None:
-            self.commands["velocity_x"] = velocity_x / -32768.0
+            self.commands[GamepadCommands.VELOCITY_X] = velocity_x / -32768.0
         if velocity_y is not None:
-            self.commands["velocity_y"] = velocity_y / -32768.0
+            self.commands[GamepadCommands.VELOCITY_Y] = velocity_y / -32768.0
         if velocity_yaw is not None:
-            self.commands["velocity_yaw"] = velocity_yaw / -32768.0
+            self.commands[GamepadCommands.VELOCITY_YAW] = velocity_yaw / -32768.0
 
         mode_switch = 0
 
         # Enter RL control mode (A + Right Bumper)
         if self._states.get(XInputEntry.BTN_A) and self._states.get(XInputEntry.BTN_BUMPER_R):
-            mode_switch = 3
+            mode_switch = GamepadModeSwitch.RL_RUNNING
 
         # Enter init mode (A + Left Bumper)
         if self._states.get(XInputEntry.BTN_A) and self._states.get(XInputEntry.BTN_BUMPER_L):
-            mode_switch = 2
+            mode_switch = GamepadModeSwitch.RL_INIT
 
         # Enter idle mode (B or Left/Right Thumbstick)
         if self._states.get(XInputEntry.BTN_X) or self._states.get(XInputEntry.BTN_THUMB_L) or self._states.get(XInputEntry.BTN_THUMB_R):
-            mode_switch = 1
+            mode_switch = GamepadModeSwitch.IDLE
 
-        self.commands["mode_switch"] = mode_switch
+        self.commands[GamepadCommands.MODE_SWITCH] = mode_switch
 
 
 if __name__ == "__main__":
@@ -123,7 +134,7 @@ if __name__ == "__main__":
 
     try:
         while True:
-            print(f"""{command_controller.commands.get("velocity_x"):.2f}, {command_controller.commands.get("velocity_y"):.2f}, {command_controller.commands.get("velocity_yaw"):.2f}""")
+            print(f"""velo_x: {command_controller.commands.get(GamepadCommands.VELOCITY_X):.2f}, velo_y: {command_controller.commands.get(GamepadCommands.VELOCITY_Y):.2f}, velo_yaw: {command_controller.commands.get(GamepadCommands.VELOCITY_YAW):.2f}, mode: {command_controller.commands.get(GamepadCommands.MODE_SWITCH)}""")
             pass
     except KeyboardInterrupt:
         print("Keyboard interrupt")

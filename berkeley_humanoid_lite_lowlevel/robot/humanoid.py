@@ -99,17 +99,18 @@ class Humanoid:
             0.0, 0.0
         ], dtype=np.float32)
 
-        self.n_lowlevel_states = 4 + 3 + 12 + 12 + 1 + 3
-        self.lowlevel_states = np.zeros(self.n_lowlevel_states, dtype=np.float32)
+        lowlevel_states_count = 4 + 3 + 12 + 12 + 1 + 3
+        self.lowlevel_states = np.zeros(lowlevel_states_count, dtype=np.float32)
 
         self.joint_velocity_target = np.zeros(len(self.joints), dtype=np.float32)
         self.joint_position_target = np.zeros(len(self.joints), dtype=np.float32)
-        self.joint_position_measured = np.zeros(len(self.joints), dtype=np.float32)
+
         self.joint_velocity_measured = np.zeros(len(self.joints), dtype=np.float32)
+        self.joint_position_measured = np.zeros(len(self.joints), dtype=np.float32)
 
         # used for RL initialization controller
-        self.init_percentage = 0.0
-        self.starting_positions = np.zeros_like(self.joint_position_target, dtype=np.float32)
+        self.init_interpo_factor = 0.0
+        self.init_starting_positions = np.zeros_like(self.joint_position_target, dtype=np.float32)
 
         config_path = "calibration.yaml"
         with open(config_path, "r") as f:
@@ -218,9 +219,8 @@ class Humanoid:
         if velocity_measured_r is not None:
             self.joint_velocity_measured[joint_id_r] = velocity_measured_r * self.joint_axis_directions[joint_id_r]
 
+    # communicate with actuators
     def update_joints(self):
-
-        # communicate with actuators
         self.update_joint_group(0, 6)
         self.update_joint_group(1, 7)
         self.update_joint_group(2, 8)
@@ -249,16 +249,16 @@ class Humanoid:
                         bus.feed(device_id)
                         bus.set_mode(device_id, recoil.Mode.POSITION)
 
-                    self.starting_positions = self.joint_position_target[:]
-                    self.init_percentage = 0.0
+                    self.init_starting_positions = self.joint_position_target[:]
+                    self.init_interpo_factor = 0.0
 
             case State.RL_INIT:
-                print(f"init: {self.init_percentage:.2f}")
-                if self.init_percentage < 1.0:
-                    self.init_percentage += 1 / 100.0
-                    self.init_percentage = min(self.init_percentage, 1.0)
+                print(f"init: {self.init_interpo_factor:.2f}")
+                if self.init_interpo_factor < 1.0:
+                    self.init_interpo_factor += 1 / 100.0
+                    self.init_interpo_factor = min(self.init_interpo_factor, 1.0)
 
-                    self.joint_position_target = linear_interpolate(self.starting_positions, self.rl_init_positions, self.init_percentage)
+                    self.joint_position_target = linear_interpolate(self.init_starting_positions, self.rl_init_positions, self.init_interpo_factor)
                 else:
                     if self.next_state == State.RL_RUNNING:
                         print("Switching to RL running mode")
