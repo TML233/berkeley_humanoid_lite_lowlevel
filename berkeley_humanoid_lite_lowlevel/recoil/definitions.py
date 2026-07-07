@@ -1,3 +1,6 @@
+from enum import IntEnum
+
+
 class Function:
     NMT                             = 0b0000
     SYNC_EMCY                       = 0b0001
@@ -16,7 +19,7 @@ class Function:
     HEARTBEAT                       = 0b1110
 
 
-class Mode:
+class Mode(IntEnum):
     # these are three safe modes
     DISABLED                        = 0x00
     IDLE                            = 0x01

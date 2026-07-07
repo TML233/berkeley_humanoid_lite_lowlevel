@@ -115,7 +115,7 @@ class Humanoid:
         config_path = "calibration.yaml"
         with open(config_path, "r") as f:
             config = OmegaConf.load(f)
-        position_offsets = np.array(config.get("position_offsets", None))
+        position_offsets = np.array(config.get("position_offsets", None)) # type: ignore
         assert position_offsets.shape[0] == len(self.joints)
         self.position_offsets[:] = position_offsets
 
