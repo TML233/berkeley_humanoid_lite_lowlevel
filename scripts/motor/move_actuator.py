@@ -32,7 +32,8 @@ try:
     while True:
         target_angle = np.sin(2 * np.pi * frequency * time.time()) * amplitude
 
-        measured_position, measured_velocity = bus.write_read_pdo_2(device_id, target_angle, 0.0)
+        bus.transmit_pdo_2(device_id, target_angle, 0.0)
+        measured_position, measured_velocity = bus.receive_pdo_2(device_id)
         if measured_position is not None and measured_velocity is not None:
             print(f"Measured pos: {measured_position:.3f} \tvel: {measured_velocity:.3f}")
 
