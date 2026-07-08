@@ -398,6 +398,10 @@ class Bus:
         print(f"Calculated encoder velocity filter alpha: {alpha:.4f}")
         self.write_encoder_velocity_filter_alpha(device_id, alpha)
 
+    def write_read_pdo_2(self, device_id: int, position_target: float, velocity_target: float) -> tuple:
+        self.transmit_pdo_2(device_id, position_target, velocity_target)
+        return self.receive_pdo_2(device_id)
+
     def transmit_pdo_2(self, device_id: int, position_target: float, velocity_target: float):
         self.transmit(CANFrame(
             device_id,
