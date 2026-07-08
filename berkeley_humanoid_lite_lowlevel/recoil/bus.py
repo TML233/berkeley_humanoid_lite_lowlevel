@@ -295,6 +295,14 @@ class Bus:
 
     def read_position_measured(self, device_id: int) -> float | None:
         return self._read_parameter_f32(device_id, Parameter.POSITION_CONTROLLER_POSITION_MEASURED)
+    
+    def read_position_measured_pdo_equivalent(self, device_id: int) -> float | None:
+        position_offset = self.read_position_offset(device_id)
+        if position_offset is None: return None
+        position_measured = self.read_position_measured(device_id)
+        if position_measured is None: return None
+        
+        return position_measured - position_offset
 
     def read_torque_filter_alpha(self, device_id: int) -> float | None:
         return self._read_parameter_f32(device_id, Parameter.POSITION_CONTROLLER_TORQUE_FILTER_ALPHA)
